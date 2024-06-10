@@ -5,6 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './screens/HomeScreen';
 import NewNote from './screens/NewNote';
 import EditNote from './screens/EditNote';
+import LabelsScreen from './screens/LabelsScreen';
 
 
 const Drawer = createDrawerNavigator();
@@ -24,6 +25,7 @@ const App = () => {
     <NavigationContainer>
       <Drawer.Navigator initialRouteName="Home">
         <Drawer.Screen name="Home" component={HomeStack} />
+        <Drawer.Screen name="Labels" component={LabelsScreen} />
         {/* <Drawer.Screen name="Labels" component={LabelsScreen} />
         <Drawer.Screen name="Folders" component={FoldersScreen} />
         <Drawer.Screen name="Trash" component={TrashScreen} /> */}
