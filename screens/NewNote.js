@@ -1,10 +1,11 @@
-// NewNoteScreen.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import { NOTES } from '../data/dummy-data'; // Assuming NOTES is an array that holds the notes
-import Note from '../models/note'; // 
+import { useNavigation } from '@react-navigation/native';
+import { NOTES } from '../data/dummy-data';
+import Note from '../models/note';
 
-const NewNote = ({ navigation }) => {
+const NewNote = () => {
+  const navigation = useNavigation();
   const [noteContent, setNoteContent] = useState('');
 
   const saveNoteHandler = () => {
@@ -23,7 +24,7 @@ const NewNote = ({ navigation }) => {
     );
 
     NOTES.push(newNote);
-    navigation.goBack(); // Go back to the previous screen
+    navigation.navigate('Home', { refresh: true }); // Navigate back to the Home screen
   };
 
   return (

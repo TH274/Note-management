@@ -1,5 +1,6 @@
+// EditNote.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { View, TextInput, Button, Alert, Keyboard, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { NOTES } from '../data/dummy-data';
@@ -9,6 +10,11 @@ const EditNote = () => {
   const route = useRoute();
   const { noteId } = route.params;
   const note = NOTES.find(note => note.id === noteId);
+
+  // Initialize note.labels if undefined
+  if (!note.labels) {
+    note.labels = [];
+  }
 
   const [content, setContent] = useState(note.content);
   const [isBookmarked, setIsBookmarked] = useState(note.isBookmarked);
@@ -45,9 +51,13 @@ const EditNote = () => {
           />
           <Button title="Save" onPress={handleSave} />
           <Button
+            title="Manage Labels"
+            onPress={() => navigation.navigate('ManageLabels', { noteId })}
+          />
+          <Button
             title="Delete"
             onPress={() => {
-              // Add delete functionality
+              NOTES.splice(NOTES.indexOf(note), 1);
               Alert.alert('Note deleted!');
               navigation.goBack();
             }}
