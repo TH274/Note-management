@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { useNotes } from '../context/context';
@@ -6,7 +6,7 @@ import { useNotes } from '../context/context';
 const TrashScreen = () => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
-  const { notes, deleteNote } = useNotes();
+  const { notes, updateNote } = useNotes();
   const [filteredNotes, setFilteredNotes] = useState([]);
 
   useEffect(() => {
@@ -15,21 +15,20 @@ const TrashScreen = () => {
   }, [isFocused, notes]);
 
   const restoreNote = (noteId) => {
-    const noteIndex = notes.findIndex(note => note.id === noteId);
-    if (noteIndex !== -1) {
-      const note = notes[noteIndex];
-      note.trash = false;
-      deleteNote(noteId);
-      navigation.navigate('Home', { refresh: true });
-    }
+    updateNote({
+      ...notes.find(note => note.id === noteId),
+      trash: false,
+    });
+    navigation.navigate('Home', { refresh: true });
   };
 
   const deleteNotePermanently = (noteId) => {
-    const noteIndex = notes.findIndex(note => note.id === noteId);
-    if (noteIndex !== -1) {
-      deleteNote(noteId);
-      Alert.alert('Note deleted permanently!');
-    }
+    updateNote({
+      ...notes.find(note => note.id === noteId),
+      trash: false,
+      deleted: true, // Or however you handle permanent deletion
+    });
+    Alert.alert('Note deleted permanently!');
   };
 
   return (

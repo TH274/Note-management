@@ -1,6 +1,5 @@
-// Labels.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, FlatList, Modal, StyleSheet } from 'react-native';
+import { View, TextInput, Button, FlatList, StyleSheet } from 'react-native';
 import LabelButton from '../components/LabelButton';
 import LabelModal from '../components/LabelModal';
 

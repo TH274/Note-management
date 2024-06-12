@@ -1,26 +1,30 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert, Keyboard, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
+import { View, TextInput, StyleSheet, Alert, Keyboard, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useNotes } from '../context/context';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/FontAwesome';
 import BottomSheet from '@gorhom/bottom-sheet';
+import NoteOptionsActionSheet from '../components/NoteOptionsActionSheet';
+import ManageLabelsScreen from './ManageLabelsScreen';
 
 const EditNote = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { noteId } = route.params;
-  const { notes, updateNote} = useNotes();
+  const { notes, updateNote } = useNotes();
 
   const note = notes.find(note => note.id === noteId);
 
-  // Initialize note.labels if undefined
   if (!note.labels) {
     note.labels = [];
   }
 
   const [content, setContent] = useState(note.content);
   const [isBookmarked, setIsBookmarked] = useState(note.bookmarked);
+  const [noteColor, setNoteColor] = useState(note.color);
+  const [selectedLabels, setSelectedLabels] = useState(note.labels);
+
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
   const bottomSheetRef = useRef(null);
@@ -33,24 +37,20 @@ const EditNote = () => {
         ...note,
         content,
         bookmarked: isBookmarked,
+        color: noteColor,
+        labels: selectedLabels,
       });
     };
     saveNote();
-  }, [content, isBookmarked]);
+  }, [content, isBookmarked, noteColor, selectedLabels]);
 
   useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      () => {
-        setKeyboardVisible(true);
-      }
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-        setKeyboardVisible(false);
-      }
-    );
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardVisible(true);
+    });
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardVisible(false);
+    });
 
     return () => {
       keyboardDidShowListener.remove();
@@ -65,7 +65,6 @@ const EditNote = () => {
     });
     navigation.goBack();
   };
-
 
   const handleBookmarkToggle = () => {
     setIsBookmarked(!isBookmarked);
@@ -82,11 +81,15 @@ const EditNote = () => {
   };
 
   const handleChangeColor = (color) => {
-    updateNote({
-      ...note,
-      color,
-    });
+    setNoteColor(color);
     bottomSheetRef.current.close();
+  };
+
+  const handleManageLabels = () => {
+    navigation.navigate('ManageLabelsScreen', {
+      noteId: note.id,
+      updateLabels: setSelectedLabels, // Pass the setSelectedLabels function to update the labels
+    });
   };
 
   const saveNoteHandler = () => {
@@ -100,7 +103,7 @@ const EditNote = () => {
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: noteColor || '#FFFFFF' }]}>
         <TextInput
           ref={inputRef}
           style={styles.input}
@@ -122,10 +125,7 @@ const EditNote = () => {
             onPress={handleBookmarkToggle}
           />
           <TouchableOpacity onPress={handleOpenBottomSheet}>
-            <Icon
-              name="ellipsis-vertical"
-              size={24}
-            />
+            <Icon name="ellipsis-vertical" size={24} />
           </TouchableOpacity>
         </View>
         <BottomSheet
@@ -139,11 +139,11 @@ const EditNote = () => {
             }
           }}
         >
-          <View style={styles.bottomSheetContent}>
-            <Button title="Change Color" onPress={() => handleChangeColor('blue')} />
-            <Button title="Update Labels" onPress={() => Alert.alert('Update Labels')} />
-            <Button title="Detele" onPress={handleDelete} color="red" />
-          </View>
+          <NoteOptionsActionSheet 
+            handleChangeColor={handleChangeColor}
+            handleDelete={handleDelete}
+            handleManageLabels={handleManageLabels}
+          />
         </BottomSheet>
       </View>
     </TouchableWithoutFeedback>
@@ -193,3 +193,4 @@ const styles = StyleSheet.create({
 });
 
 export default EditNote;
+

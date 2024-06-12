@@ -1,5 +1,35 @@
 import React, { createContext, useContext, useState } from 'react';
 
+const LabelContext = createContext();
+
+export const useLabels = () => useContext(LabelContext);
+
+export const LabelProvider = ({ children }) => {
+  const [labels, setLabels] = useState([]);
+
+  const addLabel = (label) => {
+    setLabels((prevLabels) => [...prevLabels, label]);
+  };
+
+  const updateLabel = (updatedLabel) => {
+    setLabels((prevLabels) =>
+      prevLabels.map((label) =>
+        label.id === updatedLabel.id ? updatedLabel : label
+      )
+    );
+  };
+
+  const deleteLabel = (labelId) => {
+    setLabels((prevLabels) => prevLabels.filter((label) => label.id !== labelId));
+  };
+
+  return (
+    <LabelContext.Provider value={{ labels, addLabel, updateLabel, deleteLabel }}>
+      {children}
+    </LabelContext.Provider>
+  );
+};
+
 const NotesContext = createContext();
 
 export const useNotes = () => useContext(NotesContext);

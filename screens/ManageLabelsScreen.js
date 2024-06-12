@@ -2,14 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { View, FlatList, Button, StyleSheet } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import LabelButton from '../components/LabelButton';
-import { LABELS, NOTES } from '../data/dummy-data';
+import { useNotes } from '../context/context';
 
 const ManageLabelsScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { noteId } = route.params;
-  const note = NOTES.find(note => note.id === noteId);
+  const { noteId, updateLabels } = route.params; // Retrieve the updateLabels function
+  const { notes, updateNote } = useNotes();
 
+  const note = notes.find(note => note.id === noteId);
   const [selectedLabels, setSelectedLabels] = useState(note.labels || []);
 
   useEffect(() => {
@@ -26,7 +27,6 @@ const ManageLabelsScreen = () => {
       : [...selectedLabels, labelId];
 
     setSelectedLabels(updatedLabels);
-    note.labels = updatedLabels;
   };
 
   const renderLabelItem = ({ item }) => (
@@ -37,14 +37,19 @@ const ManageLabelsScreen = () => {
     />
   );
 
+  const handleDone = () => {
+    note.labels = selectedLabels;
+    updateLabels(selectedLabels); // Update labels in EditNote
+    navigation.goBack();
+  };
+
   return (
     <View style={styles.container}>
       <FlatList
-        data={LABELS}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderLabelItem}
       />
-      <Button title="Done" onPress={() => navigation.goBack()} />
+      <Button title="Done" onPress={handleDone} />
     </View>
   );
 };
@@ -53,7 +58,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-  },
+	},
 });
 
 export default ManageLabelsScreen;
+  

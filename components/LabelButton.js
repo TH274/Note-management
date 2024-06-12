@@ -1,19 +1,27 @@
 import React from 'react';
-import { Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 
-const LabelButton = ({ label, onPress }) => (
-  <TouchableOpacity style={styles.labelButton} onPress={onPress}>
-    <Text style={styles.labelButtonText}>{label.text}</Text>
-  </TouchableOpacity>
-);
+const LabelButton = ({ label, onPress, selected }) => {
+  return (
+    <TouchableOpacity style={[styles.button, selected && styles.selected]} onPress={onPress}>
+      <Text style={styles.buttonText}>{label.text}</Text>
+    </TouchableOpacity>
+  );
+};
 
 const styles = StyleSheet.create({
-  labelButton: {
+  button: {
     padding: 10,
-    backgroundColor: '#eee',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
     marginVertical: 5,
+    alignItems: 'center',
   },
-  labelButtonText: {
+  selected: {
+    backgroundColor: '#d3d3d3',
+  },
+  buttonText: {
     fontSize: 16,
   },
 });

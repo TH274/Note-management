@@ -3,14 +3,8 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Keyboard } 
 import { useNotes } from '../context/context';
 import uuid from 'react-native-uuid';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { NOTES } from '../data/dummy-data';
-import Note from '../models/note';
 
-const NewNote = () => {
-  const navigation = useNavigation();
+const NewNote = ({ navigation }) => {
   const [noteContent, setNoteContent] = useState('');
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const { addNote } = useNotes();
@@ -52,8 +46,6 @@ const NewNote = () => {
 
     addNote(newNote);
     navigation.goBack();
-    NOTES.push(newNote);
-    navigation.navigate('Home', { refresh: true }); // Navigate back to the Home screen
   };
 
   return (
