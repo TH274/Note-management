@@ -6,6 +6,7 @@ export const useLabels = () => useContext(LabelContext);
 
 export const LabelProvider = ({ children }) => {
   const [labels, setLabels] = useState([]);
+  const [folders, setFolders] = useState([]);
 
   const addLabel = (label) => {
     setLabels((prevLabels) => [...prevLabels, label]);
@@ -23,8 +24,26 @@ export const LabelProvider = ({ children }) => {
     setLabels((prevLabels) => prevLabels.filter((label) => label.id !== labelId));
   };
 
+  const addFolder = (folder) => {
+    setFolders((prevFolders) => [...prevFolders, folder]);
+  };
+
+  const updateFolder = (updatedFolder) => {
+    setFolders((prevFolders) =>
+      prevFolders.map((folder) =>
+        folder.id === updatedFolder.id ? updatedFolder : folder
+      )
+    );
+  };
+
+  const deleteFolder = (folderId) => {
+    setFolders((prevFolders) => prevFolders.filter((folder) => folder.id !== folderId));
+  };
+
   return (
-    <LabelContext.Provider value={{ labels, addLabel, updateLabel, deleteLabel }}>
+    <LabelContext.Provider
+      value={{ labels, addLabel, updateLabel, deleteLabel, folders, addFolder, updateFolder, deleteFolder }}
+    >
       {children}
     </LabelContext.Provider>
   );
@@ -36,6 +55,7 @@ export const useNotes = () => useContext(NotesContext);
 
 export const NotesProvider = ({ children }) => {
   const [notes, setNotes] = useState([]);
+  const [folders, setFolders] = useState([]);
 
   const addNote = (note) => {
     setNotes((prevNotes) => [...prevNotes, note]);
@@ -53,8 +73,26 @@ export const NotesProvider = ({ children }) => {
     setNotes((prevNotes) => prevNotes.filter((note) => note.id !== noteId));
   };
 
+  const addFolder = (folder) => {
+    setFolders((prevFolders) => [...prevFolders, folder]);
+  };
+
+  const updateFolder = (updatedFolder) => {
+    setFolders((prevFolders) =>
+      prevFolders.map((folder) =>
+        folder.id === updatedFolder.id ? updatedFolder : folder
+      )
+    );
+  };
+
+  const deleteFolder = (folderId) => {
+    setFolders((prevFolders) => prevFolders.filter((folder) => folder.id !== folderId));
+  };
+
   return (
-    <NotesContext.Provider value={{ notes, addNote, updateNote, deleteNote }}>
+    <NotesContext.Provider
+      value={{ notes, addNote,setNotes, updateNote, deleteNote, folders, addFolder, updateFolder, deleteFolder }}
+    >
       {children}
     </NotesContext.Provider>
   );
