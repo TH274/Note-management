@@ -4,26 +4,32 @@ import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { useNotes } from '../context/context';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-
 const HomeScreen = () => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
-  const { notes } = useNotes();
+  const { notes, updateNote } = useNotes();
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredNotes, setFilteredNotes] = useState(notes);
 
   useEffect(() => {
-    setFilteredNotes(notes);
-  }, [isFocused]);
+    setFilteredNotes(notes.filter(note => !note.trash));
+  }, [isFocused, notes]);
 
   const handleSearch = (text) => {
     setSearchQuery(text);
     if (text) {
-      const filtered = notes.filter(note => note.content.toLowerCase().includes(text.toLowerCase()));
+      const filtered = notes.filter(note => !note.trash && note.content.toLowerCase().includes(text.toLowerCase()));
       setFilteredNotes(filtered);
     } else {
-      setFilteredNotes(notes);
+      setFilteredNotes(notes.filter(note => !note.trash));
     }
+  };
+
+  const handleDelete = (noteId) => {
+    updateNote({
+      ...notes.find(note => note.id === noteId),
+      trash: true,
+    });
   };
 
   return (
@@ -52,7 +58,7 @@ const HomeScreen = () => {
                 <Text style={styles.noteTime}>{note.time}</Text>
                 <Text style={styles.noteTitle}>{note.title}</Text>
                 <Text style={styles.noteContent}>{note.content}</Text>
-                {note.bookmarked && <Text style={styles.bookmark}>📌</Text>}
+                {note.bookmarked &&  <Icon style={styles.bookmark} name={'bookmark'}size={20}/>}
               </View>
             </TouchableOpacity>
           ))

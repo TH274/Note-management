@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { View, Text, FlatList, Button, StyleSheet, Alert} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { useNotes } from '../context/context';
 
@@ -7,14 +7,17 @@ const TrashScreen = () => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const { notes, deleteNote } = useNotes();
-  const trashNotes = notes.filter(note => note.trash);
+  const [filteredNotes, setFilteredNotes] = useState([]);
 
   useEffect(() => {
-  }, [isFocused]);
+    const trashNotes = notes.filter(note => note.trash);
+    setFilteredNotes(trashNotes);
+  }, [isFocused, notes]);
 
   const restoreNote = (noteId) => {
-    const note = notes.find(note => note.id === noteId);
-    if (note) {
+    const noteIndex = notes.findIndex(note => note.id === noteId);
+    if (noteIndex !== -1) {
+      const note = notes[noteIndex];
       note.trash = false;
       deleteNote(noteId);
       navigation.navigate('Home', { refresh: true });
@@ -22,22 +25,35 @@ const TrashScreen = () => {
   };
 
   const deleteNotePermanently = (noteId) => {
-    deleteNote(noteId);
-    Alert.alert('Note deleted permanently!');
+    const noteIndex = notes.findIndex(note => note.id === noteId);
+    if (noteIndex !== -1) {
+      deleteNote(noteId);
+      Alert.alert('Note deleted permanently!');
+    }
   };
 
   return (
     <View style={styles.container}>
+      <View style={styles.buttonContainer}>
+        <Text style={styles.notesCount}>{filteredNotes.length} notes in trash</Text>
+        <View style={styles.buttonsRight}>
+          <TouchableOpacity style={styles.restoreButton} onPress={() => filteredNotes.forEach(note => restoreNote(note.id))}>
+            <Text style={styles.restoreButtonText}>Restore</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.emptyButton} onPress={() => filteredNotes.forEach(note => deleteNotePermanently(note.id))}>
+            <Text style={styles.emptyButtonText}>Empty</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
       <FlatList
-        data={trashNotes}
+        data={filteredNotes}
         keyExtractor={(item) => item.id}
+        ListEmptyComponent={<Text style={styles.textAlert}>No notes found</Text>}
         renderItem={({ item }) => (
           <View style={styles.noteContainer}>
-            <Text>{item.content}</Text>
-            <View style={styles.buttonContainer}>
-              <Button title="Restore" onPress={() => restoreNote(item.id)} />
-              <Button title="Delete" color="red" onPress={() => deleteNotePermanently(item.id)} />
-            </View>
+            <Text style={styles.noteTime}>{item.time}</Text>
+            <Text style={styles.noteTitle}>{item.title}</Text>
+            <Text style={styles.noteContent}>{item.content}</Text>
           </View>
         )}
       />
@@ -50,17 +66,75 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
   },
+  notesCount: {
+    marginBottom: 10,
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: '#74c1fa',
+  },
+  textAlert: {
+    textAlign: 'center',
+    marginTop: 40,
+    color: 'gray',
+  },
   noteContainer: {
-    padding: 10,
-    marginVertical: 5,
+    padding: 15,
     borderRadius: 5,
+    backgroundColor: 'white',
+    borderColor: '#ddd',
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  noteTime: {
+    fontSize: 12,
+    color: 'gray',
+    marginBottom: 5,
+  },
+  noteTitle: {
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  noteContent: {
+    marginBottom: 5,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 10,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  buttonsRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  buttonWrapper: {
+    marginHorizontal: 4,
+  },
+  restoreButton: {
+    backgroundColor: '#ddd',
+    padding: 10,
+    borderRadius: 5,
+    marginHorizontal: 4,
+  },
+  restoreButtonText: {
+    color: 'black',
+    fontWeight: '500',
+  },
+  emptyButton: {
+    backgroundColor: '#FF6969',
+    padding: 10,
+    borderRadius: 5,
+    marginHorizontal: 4,
+  },
+  emptyButtonText: {
+    color: 'white',
+    fontWeight: '500',
   },
 });
 

@@ -23,7 +23,6 @@ const NewNote = ({ navigation }) => {
       }
     );
 
-    // Clean up listeners
     return () => {
       keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
@@ -80,8 +79,8 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   roundButton: {
-    width: 60,
-    height: 60,
+    width: 50,
+    height: 50,
     borderRadius: 30,
     backgroundColor: '#74c1fa',
     justifyContent: 'center',

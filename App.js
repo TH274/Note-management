@@ -8,28 +8,29 @@ import { NotesProvider } from './context/context';
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
 
-const HomeStack = () => (
-  <Stack.Navigator>
-    <Stack.Screen name="Home" component={screens.Home} options={{ headerShown: false }}/>
-    <Stack.Screen name="NewNote" component={screens.NewNote} options={{ headerShown: false }} />
-    <Stack.Screen name="EditNote" component={screens.EditNote} options={{ headerShown: false }}/>
-  </Stack.Navigator>
-);
+const HomeStack = () => {
+  return (
+    <Drawer.Navigator initialRouteName="Home">
+      <Drawer.Screen name="Home" component={screens.Home} />
+      <Drawer.Screen name="Labels" component={screens.LabelsScreen} />
+      <Drawer.Screen name="Folders" component={screens.Folders} />
+      <Drawer.Screen name="Trash" component={screens.Trash} />
+    </Drawer.Navigator>
+  );
+};
 
 const App = () => {
   return (
     <NotesProvider>
       <NavigationContainer>
-        <Drawer.Navigator initialRouteName="HomeStack">
-          <Drawer.Screen name="HomeStack" component={HomeStack} options={{ title: 'Home' }} />
-          <Drawer.Screen name="Labels" component={screens.LabelsScreen} />
-          <Drawer.Screen name="Folders" component={screens.Folders} />
-          <Drawer.Screen name="Trash" component={screens.Trash} /> 
-        </Drawer.Navigator>
+        <Stack.Navigator>
+          <Stack.Screen name="HomeStack" component={HomeStack} options={{ headerShown: false }} />
+          <Stack.Screen name="NewNote" component={screens.NewNote} />
+          <Stack.Screen name="EditNote" component={screens.EditNote} />
+        </Stack.Navigator>
       </NavigationContainer>
     </NotesProvider>
   );
 };
-
 
 export default App;
