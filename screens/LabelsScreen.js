@@ -1,21 +1,20 @@
+// Labels.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, FlatList, Modal, StyleSheet } from 'react-native';
 import LabelButton from '../components/LabelButton';
 import LabelModal from '../components/LabelModal';
 
 const LabelsScreen = () => {
-  const [labels, setLabels] = useState([]); // Array to store labels
-  const [searchTerm, setSearchTerm] = useState(''); // Search keyword
-  const [selectedLabel, setSelectedLabel] = useState(null); // Selected label for editing/deleting
-  const [modalVisible, setModalVisible] = useState(false); // Modal visibility state
-  const [newLabelText, setNewLabelText] = useState(''); // Text for new label
+  const [labels, setLabels] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedLabel, setSelectedLabel] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [newLabelText, setNewLabelText] = useState('');
 
-  // Function to handle search input change
   const handleSearchChange = (text) => {
     setSearchTerm(text);
   };
 
-  // Function to handle new label creation
   const handleCreateLabel = () => {
     if (newLabelText.trim()) {
       setLabels([...labels, { id: Date.now(), text: newLabelText.trim() }]);
@@ -23,13 +22,11 @@ const LabelsScreen = () => {
     }
   };
 
-  // Function to handle label selection
   const handleSelectLabel = (label) => {
     setSelectedLabel(label);
     setModalVisible(true);
   };
 
-  // Function to handle label update after editing
   const handleUpdateLabel = (text) => {
     const updatedLabels = labels.map((label) => (label.id === selectedLabel.id ? { ...label, text } : label));
     setLabels(updatedLabels);
@@ -37,7 +34,6 @@ const LabelsScreen = () => {
     setModalVisible(false);
   };
 
-  // Function to handle label deletion
   const handleDeleteLabel = () => {
     const updatedLabels = labels.filter((label) => label.id !== selectedLabel.id);
     setLabels(updatedLabels);
