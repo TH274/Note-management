@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, FlatList, TouchableOpacity, StyleSheet, Modal, Button } from 'react-native';
+import { useLabels } from '../context/context';
 
 const LabelButton = ({ label, onPress }) => (
   <TouchableOpacity onPress={() => onPress(label)} style={styles.labelButton}>
@@ -33,7 +34,7 @@ const LabelModal = ({ visible, label, onUpdate, onDelete, onClose }) => {
 };
 
 const LabelsScreen = () => {
-  const [labels, setLabels] = useState([]);
+  const { labels, addLabel, updateLabel, deleteLabel } = useLabels();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLabel, setSelectedLabel] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -44,7 +45,7 @@ const LabelsScreen = () => {
 
   const handleCreateLabel = (labelText) => {
     if (labelText.trim()) {
-      setLabels([...labels, { id: Date.now(), text: labelText.trim() }]);
+      addLabel({ id: Date.now(), text: labelText.trim() });
       setSearchTerm('');
     }
   };
@@ -55,15 +56,13 @@ const LabelsScreen = () => {
   };
 
   const handleUpdateLabel = (text) => {
-    const updatedLabels = labels.map((label) => (label.id === selectedLabel.id ? { ...label, text } : label));
-    setLabels(updatedLabels);
+    updateLabel({ ...selectedLabel, text });
     setSelectedLabel(null);
     setModalVisible(false);
   };
 
   const handleDeleteLabel = () => {
-    const updatedLabels = labels.filter((label) => label.id !== selectedLabel.id);
-    setLabels(updatedLabels);
+    deleteLabel(selectedLabel.id);
     setSelectedLabel(null);
     setModalVisible(false);
   };
