@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
   },
   input: {
     textAlignVertical: 'top',
-    fontSize: 18,
+    fontSize: 24,
   },
   bottomTab: {
     position: 'absolute',

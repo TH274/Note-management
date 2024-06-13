@@ -1,12 +1,9 @@
 import React, { createContext, useContext, useState } from 'react';
 
-// Create LabelContext
 const LabelContext = createContext();
 
-// Custom hook to use LabelContext
 export const useLabels = () => useContext(LabelContext);
 
-// Provider component for LabelContext
 export const LabelProvider = ({ children }) => {
   const [labels, setLabels] = useState([]);
 
@@ -35,13 +32,10 @@ export const LabelProvider = ({ children }) => {
   );
 };
 
-// Create NotesContext
 const NotesContext = createContext();
 
-// Custom hook to use NotesContext
 export const useNotes = () => useContext(NotesContext);
 
-// Provider component for NotesContext
 export const NotesProvider = ({ children }) => {
   const [notes, setNotes] = useState([]);
 

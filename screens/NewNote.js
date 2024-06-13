@@ -4,7 +4,7 @@ import { useNotes } from '../context/context.jsx';
 import uuid from 'react-native-uuid';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const NewNote = ({ navigation }) => {
+const NewNote = ({ navigation}) => {
   const [noteContent, setNoteContent] = useState('');
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const { addNote } = useNotes();
@@ -38,7 +38,6 @@ const NewNote = ({ navigation }) => {
     const newNote = {
       id: uuid.v4(),
       time: new Date().toLocaleString(),
-      title: 'New Note',
       content: noteContent,
       color: 'gray',
       bookmarked: false,

@@ -43,8 +43,9 @@ const ManageLabelsScreen = () => {
   const handleDone = () => {
     note.labels = selectedLabels;
     updateNote({ ...note, labels: selectedLabels });
-    navigation.goBack();
+    navigation.navigate('Home');
   };
+
   return (
     <View style={styles.container}>
       <FlatList

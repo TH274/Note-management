@@ -1,18 +1,16 @@
-import React, { useState, useEffect, } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
-import { useNavigation, useIsFocused, useRoute } from '@react-navigation/native';
-import { useNotes } from '../context/context.jsx';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
+import { useNotes, useLabels } from '../context/context.jsx';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
-  const route = useRoute();
-  const { selectedColor } = route.params || {};
   const { notes } = useNotes();
+  const { labels } = useLabels();
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredNotes, setFilteredNotes] = useState(notes);
-  const [isSearchVisible, setSearchVisible] = useState(false);
   const [selectedNotes, setSelectedNotes] = useState([]);
 
   useEffect(() => {
@@ -27,15 +25,6 @@ const HomeScreen = () => {
     } else {
       setFilteredNotes(notes.filter(note => !note.trash));
     }
-  };
-
-  const toggleSearch = () => {
-    setSearchVisible(!isSearchVisible);
-  };
-
-  const clearSearch = () => {
-    setSearchQuery('');
-    setFilteredNotes(notes.filter(note => !note.trash));
   };
 
   const handleLongPress = (noteId) => {
@@ -54,31 +43,33 @@ const HomeScreen = () => {
     }
   };
 
+  const renderLabels = (noteLabels) => {
+    if (!noteLabels) return null;
+
+    return (
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.labelsContainer}>
+        {noteLabels.map((labelId) => {
+          const label = labels.find(label => label.id === labelId);
+          return (
+            <View key={labelId} style={styles.label}>
+              <Text style={styles.labelText}>{label ? label.text : ''}</Text>
+            </View>
+          );
+        })}
+      </ScrollView>
+    );
+  };
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchContainer}>
-        {isSearchVisible ? (
-          <>
-            <TouchableOpacity onPress={toggleSearch}>
-              <Text><Icon name="arrow-back" size={24} /></Text>
-            </TouchableOpacity>
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search notes"
-              value={searchQuery}
-              onChangeText={handleSearch}
-            />
-            <TouchableOpacity onPress={clearSearch}>
-              <Text><Icon name="close" size={24} /></Text>
-            </TouchableOpacity>
-          </>
-        ) : (
-          <TouchableOpacity onPress={toggleSearch}>
-            <Text><Icon name="search" size={24} /></Text>
-          </TouchableOpacity>
-        )}
-      </View>
+    <View style={styles.searchContainer}>
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Search notes"
+        value={searchQuery}
+        onChangeText={handleSearch}
+      />
+    </View>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.notesCount}>
           {selectedNotes.length > 0
@@ -99,16 +90,11 @@ const HomeScreen = () => {
               ]}
             >
               <View style={styles.noteContainer}>
-              <View style={styles.noteInfo}>
-              {selectedColor && (
-              <View style={styles.colorCircle}>
-                <View style={{ backgroundColor: selectedColor, width: 10, height: 10, borderRadius: 5 }} />
-              </View>
-              )}
-                <Text style={styles.noteTime}>{note.time}</Text>
+                <View style={styles.noteInfo}>
+                  <Text style={styles.noteTime}>{note.time}</Text>
                 </View>
-                <Text style={styles.noteTitle}>{note.title}</Text>
-                <Text style={styles.noteContent}>{note.content}</Text>
+                {renderLabels(note.labels)}
+                <Text numberOfLines={1} ellipsizeMode="tail" style={styles.noteContent}>{note.content}</Text>
                 {note.bookmarked && <Icon style={styles.bookmark} name={'bookmark'} size={20} />}
               </View>
             </TouchableOpacity>
@@ -151,9 +137,9 @@ const styles = StyleSheet.create({
   noteTouchable: {
     marginBottom: 10,
   },
-  textAlert: {},
+
   noteContainer: {
-    padding: 15,
+    padding: 20,
     borderRadius: 5,
     backgroundColor: 'white',
     borderColor: '#ddd',
@@ -171,21 +157,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 5,
   },
-  colorCircle: {
-    width: 15,
-    height: 13.5,
-    marginRight: 1,
-  },
+
   noteTime: {
-    fontSize: 12,
+    fontSize: 13,
     color: 'gray',
     marginBottom: 5,
   },
-  noteTitle: {
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
+
   noteContent: {
+    fontSize: 20,
     marginBottom: 5,
   },
   bookmark: {
@@ -210,6 +190,20 @@ const styles = StyleSheet.create({
   addButtonText: {
     color: 'white',
     fontSize: 30,
+  },
+  labelsContainer: {
+    flexDirection: 'row',
+  },
+  label: {
+    marginBottom: 14,
+    backgroundColor: '#A7E6FF',
+    padding: 8,
+    borderRadius: 2,
+    marginRight: 8,
+  },
+  labelText: {
+    fontSize: 13,
+    color: '#333',
   },
 });
 
