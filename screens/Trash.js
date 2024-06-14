@@ -67,15 +67,6 @@ const TrashScreen = () => {
         keyExtractor={(item) => item.id}
         ListEmptyComponent={<Text style={styles.textAlert}>No notes found</Text>}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            key={item.id}
-            onPress={() => restoreNote(item.id)}
-            onLongPress={() => deleteNotePermanently(item.id)}
-            style={[
-              styles.noteTouchable,
-              // Add selectedNote style if needed
-            ]}
-          >
             <View style={styles.noteContainer}>
               <View style={styles.noteInfo}>
                 <Text style={styles.noteTime}>{item.time}</Text>
@@ -84,7 +75,6 @@ const TrashScreen = () => {
               <Text numberOfLines={1} ellipsizeMode="tail" style={styles.noteContent}>{item.content}</Text>
               {item.bookmarked && <Icon style={styles.bookmark} name={'bookmark'} size={20} />}
             </View>
-          </TouchableOpacity>
         )}
       />
     </View>
@@ -106,9 +96,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 40,
     color: 'gray',
-  },
-  noteTouchable: {
-    marginBottom: 10,
   },
   noteContainer: {
     padding: 20,
