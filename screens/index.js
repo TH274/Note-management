@@ -5,3 +5,4 @@ export { default as LabelsScreen } from './LabelsScreen';
 export { default as ManageLabelsScreen } from './ManageLabelsScreen';
 export { default as Folders } from './Folders';
 export { default as Trash } from './Trash';
+export { default as ManageNoteFolder } from './ManageNoteFolder';

@@ -4,10 +4,11 @@ import { useNotes } from '../context/context.jsx';
 import uuid from 'react-native-uuid';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const NewNote = ({ navigation}) => {
+const NewNote = ({ navigation, route}) => {
   const [noteContent, setNoteContent] = useState('');
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const { addNote } = useNotes();
+  const { folderId } = route.params || {}; // Retrieve folderId from route params
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -39,6 +40,7 @@ const NewNote = ({ navigation}) => {
       id: uuid.v4(),
       time: new Date().toLocaleString(),
       content: noteContent,
+      folderId,
       color: 'gray',
       bookmarked: false,
     };

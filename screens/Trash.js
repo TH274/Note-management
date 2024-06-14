@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
-import { useNotes } from '../context/context.jsx';
+import { useNotes, useLabels } from '../context/context';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const TrashScreen = () => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const { notes, updateNote, deleteNote } = useNotes();
+  const { labels } = useLabels();
   const [filteredNotes, setFilteredNotes] = useState([]);
 
   useEffect(() => {
@@ -23,11 +25,28 @@ const TrashScreen = () => {
   };
 
   const deleteNotePermanently = (noteId) => {
-  const noteIndex = notes.findIndex(note => note.id === noteId);
+    const noteIndex = notes.findIndex(note => note.id === noteId);
     if (noteIndex !== -1) {
       deleteNote(noteId);
       Alert.alert('Note deleted permanently!');
     }
+  };
+
+  const renderLabels = (noteLabels) => {
+    if (!noteLabels) return null;
+
+    return (
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.labelsContainer}>
+        {noteLabels.map((labelId) => {
+          const label = labels.find(label => label.id === labelId);
+          return (
+            <View key={labelId} style={styles.label}>
+              <Text style={styles.labelText}>{label ? label.text : ''}</Text>
+            </View>
+          );
+        })}
+      </ScrollView>
+    );
   };
 
   return (
@@ -48,11 +67,24 @@ const TrashScreen = () => {
         keyExtractor={(item) => item.id}
         ListEmptyComponent={<Text style={styles.textAlert}>No notes found</Text>}
         renderItem={({ item }) => (
-          <View style={styles.noteContainer}>
-            <Text style={styles.noteTime}>{item.time}</Text>
-            <Text style={styles.noteTitle}>{item.title}</Text>
-            <Text style={styles.noteContent}>{item.content}</Text>
-          </View>
+          <TouchableOpacity
+            key={item.id}
+            onPress={() => restoreNote(item.id)}
+            onLongPress={() => deleteNotePermanently(item.id)}
+            style={[
+              styles.noteTouchable,
+              // Add selectedNote style if needed
+            ]}
+          >
+            <View style={styles.noteContainer}>
+              <View style={styles.noteInfo}>
+                <Text style={styles.noteTime}>{item.time}</Text>
+              </View>
+              {renderLabels(item.labels)}
+              <Text numberOfLines={1} ellipsizeMode="tail" style={styles.noteContent}>{item.content}</Text>
+              {item.bookmarked && <Icon style={styles.bookmark} name={'bookmark'} size={20} />}
+            </View>
+          </TouchableOpacity>
         )}
       />
     </View>
@@ -75,8 +107,11 @@ const styles = StyleSheet.create({
     marginTop: 40,
     color: 'gray',
   },
+  noteTouchable: {
+    marginBottom: 10,
+  },
   noteContainer: {
-    padding: 15,
+    padding: 20,
     borderRadius: 5,
     backgroundColor: 'white',
     borderColor: '#ddd',
@@ -89,18 +124,26 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 3,
   },
+  noteInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
   noteTime: {
-    fontSize: 12,
+    fontSize: 13,
     color: 'gray',
     marginBottom: 5,
   },
-  noteTitle: {
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
   noteContent: {
+    fontSize: 20,
     marginBottom: 5,
   },
+  bookmark: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+  },
+  
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -110,9 +153,6 @@ const styles = StyleSheet.create({
   buttonsRight: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  buttonWrapper: {
-    marginHorizontal: 4,
   },
   restoreButton: {
     backgroundColor: '#ddd',
@@ -133,6 +173,20 @@ const styles = StyleSheet.create({
   emptyButtonText: {
     color: 'white',
     fontWeight: '500',
+  },
+  labelsContainer: {
+    flexDirection: 'row',
+    marginBottom: 5,
+  },
+  label: {
+    backgroundColor: '#A7E6FF',
+    padding: 5,
+    borderRadius: 2,
+    marginRight: 5,
+  },
+  labelText: {
+    fontSize: 13,
+    color: '#333',
   },
 });
 

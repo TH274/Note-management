@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
-import { useNavigation, useIsFocused } from '@react-navigation/native';
-import { useNotes, useLabels } from '../context/context.jsx';
+import { useNavigation, useIsFocused, useRoute } from '@react-navigation/native';
+import { useNotes, useLabels } from '../context/context';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const HomeScreen = () => {
@@ -12,6 +12,8 @@ const HomeScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredNotes, setFilteredNotes] = useState(notes);
   const [selectedNotes, setSelectedNotes] = useState([]);
+  const route = useRoute();
+  const { selectedColor } = route.params || {};
 
   useEffect(() => {
     setFilteredNotes(notes.filter(note => !note.trash));
@@ -62,14 +64,14 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-    <View style={styles.searchContainer}>
-      <TextInput
-        style={styles.searchInput}
-        placeholder="Search notes"
-        value={searchQuery}
-        onChangeText={handleSearch}
-      />
-    </View>
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search notes"
+          value={searchQuery}
+          onChangeText={handleSearch}
+        />
+      </View>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.notesCount}>
           {selectedNotes.length > 0
@@ -91,6 +93,11 @@ const HomeScreen = () => {
             >
               <View style={styles.noteContainer}>
                 <View style={styles.noteInfo}>
+                  {selectedColor && (
+                    <View style={styles.colorCircle}>
+                      <View style={{ backgroundColor: selectedColor, width: 10, height: 10, borderRadius: 5 }} />
+                    </View>
+                  )}
                   <Text style={styles.noteTime}>{note.time}</Text>
                 </View>
                 {renderLabels(note.labels)}
@@ -137,7 +144,6 @@ const styles = StyleSheet.create({
   noteTouchable: {
     marginBottom: 10,
   },
-
   noteContainer: {
     padding: 20,
     borderRadius: 5,
@@ -157,13 +163,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 5,
   },
-
+  colorCircle: {
+    width: 18,
+    height: 12,
+    borderRadius: 10,
+  },
   noteTime: {
     fontSize: 13,
     color: 'gray',
     marginBottom: 5,
   },
-
   noteContent: {
     fontSize: 20,
     marginBottom: 5,

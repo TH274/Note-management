@@ -8,6 +8,12 @@ const LabelButton = ({ label, onPress }) => (
   </TouchableOpacity>
 );
 
+const CustomButton = ({ title, onPress, color }) => (
+  <TouchableOpacity onPress={onPress} style={[styles.customButton, { backgroundColor: color }]}>
+    <Text style={styles.customButtonText}>{title}</Text>
+  </TouchableOpacity>
+);
+
 const LabelModal = ({ visible, label, onUpdate, onDelete, onClose }) => {
   const [labelText, setLabelText] = useState(label ? label.text : '');
 
@@ -24,9 +30,11 @@ const LabelModal = ({ visible, label, onUpdate, onDelete, onClose }) => {
             onChangeText={setLabelText}
             style={styles.input}
           />
-          <Button title="Save" onPress={handleSave} />
-          <Button title="Delete" onPress={onDelete} color="red" />
-          <Button title="Close" onPress={onClose} />
+          <View style={styles.buttonContainer}>
+            <CustomButton title="Save" onPress={handleSave} color="#4CAF50" />
+            <CustomButton title="Delete" onPress={onDelete} color="#F44336" />
+            <CustomButton title="Close" onPress={onClose} color="#9E9E9E" />
+          </View>
         </View>
       </View>
     </Modal>
@@ -87,7 +95,7 @@ const LabelsScreen = () => {
         data={filteredLabels}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => <LabelButton label={item} onPress={handleSelectLabel} />}
-        numColumns={2} // Static number of columns
+        numColumns={2}
         columnWrapperStyle={styles.columnWrapper}
       />
       <LabelModal
@@ -105,6 +113,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8f8f8',
+    padding: 16,
   },
   input: {
     height: 40,
@@ -113,13 +122,15 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingHorizontal: 8,
     backgroundColor: 'white',
+    borderRadius: 5,
   },
   createLabelText: {
     color: 'blue',
+    paddingLeft: 12,
     marginBottom: 12,
   },
   labelButton: {
-    backgroundColor: '#e0e0e0',
+    backgroundColor: '#A7E6FF',
     padding: 10,
     margin: 5,
     borderRadius: 5,
@@ -136,13 +147,37 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalContent: {
+    width: '80%',
     backgroundColor: 'white',
     padding: 20,
-    margin: 20,
     borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  customButton: {
+    flex: 1,
+    margin: 5,
+    paddingVertical: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  customButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
