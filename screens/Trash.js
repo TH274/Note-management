@@ -32,6 +32,28 @@ const TrashScreen = () => {
     }
   };
 
+  const handleNoteAction = (noteId) => {
+    Alert.alert(
+      "Trash",
+      "What would you like to do with this note?",
+      [
+        {
+          text: "Restore",
+          onPress: () => restoreNote(noteId),
+        },
+        {
+          text: "Delete Permanently",
+          onPress: () => deleteNotePermanently(noteId),
+          style: "destructive"
+        },
+        {
+          text: "Cancel",
+          style: "cancel"
+        }
+      ]
+    );
+  };
+
   const renderLabels = (noteLabels) => {
     if (!noteLabels) return null;
 
@@ -55,10 +77,10 @@ const TrashScreen = () => {
         <Text style={styles.notesCount}>{filteredNotes.length} notes in trash</Text>
         <View style={styles.buttonsRight}>
           <TouchableOpacity style={styles.restoreButton} onPress={() => filteredNotes.forEach(note => restoreNote(note.id))}>
-            <Text style={styles.restoreButtonText}>Restore</Text>
+            <Text style={styles.restoreButtonText}>Restore All</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.emptyButton} onPress={() => filteredNotes.forEach(note => deleteNotePermanently(note.id))}>
-            <Text style={styles.emptyButtonText}>Empty</Text>
+            <Text style={styles.emptyButtonText}>Empty All</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -67,6 +89,7 @@ const TrashScreen = () => {
         keyExtractor={(item) => item.id}
         ListEmptyComponent={<Text style={styles.textAlert}>No notes found</Text>}
         renderItem={({ item }) => (
+          <TouchableOpacity onPress={() => handleNoteAction(item.id)}>
             <View style={styles.noteContainer}>
               <View style={styles.noteInfo}>
                 <Text style={styles.noteTime}>{item.time}</Text>
@@ -75,6 +98,7 @@ const TrashScreen = () => {
               <Text numberOfLines={1} ellipsizeMode="tail" style={styles.noteContent}>{item.content}</Text>
               {item.bookmarked && <Icon style={styles.bookmark} name={'bookmark'} size={20} />}
             </View>
+          </TouchableOpacity>
         )}
       />
     </View>
@@ -110,6 +134,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
+    marginBottom: 10,
   },
   noteInfo: {
     flexDirection: 'row',
@@ -130,7 +155,6 @@ const styles = StyleSheet.create({
     top: 10,
     right: 10,
   },
-  
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',

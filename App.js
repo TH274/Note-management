@@ -30,6 +30,7 @@ const App = () => {
             <Stack.Screen name="NewNote" component={screens.NewNote} />
             <Stack.Screen name="ManageLabelsScreen" component={screens.ManageLabelsScreen} />
             <Stack.Screen name="ManageNoteFolder" component={screens.ManageNoteFolder} />
+            <Stack.Screen name="NoteSelector" component={screens.NoteSelector} />
             <Stack.Screen name="EditNote" component={screens.EditNote} options={{ presentation: 'modal' }} />
           </Stack.Navigator>
         </NavigationContainer>
